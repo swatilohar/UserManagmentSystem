@@ -27,7 +27,7 @@ public class UserController {
 	private UserService us;
 	
 	@PostMapping(value = "/reg")
-	public ResponseEntity<?> addUser(@Valid @RequestBody User u){
+	public ResponseEntity<?> addUser(@RequestBody User u){
 		
 		us.addUserInService(u);
 		
@@ -41,7 +41,13 @@ public class UserController {
 		
 		UserDTO userdto = us.getUserByIdInService(id);
 		
+		if(userdto != null) {
+		
 		return new ResponseEntity(userdto, HttpStatus.OK);
+	}else {
+		
+		return new ResponseEntity("user not found", HttpStatus.INTERNAL_SERVER_ERROR);
+	}
 	}
 	
 	@DeleteMapping(value = "/deletebyId/{id}")
@@ -64,6 +70,19 @@ public class UserController {
 			return new ResponseEntity("User is not present", HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
+	
+		@GetMapping(value = "/getAllUserdetailsById/{id}")
+		public ResponseEntity<?> getAllUserdetailsById(@PathVariable("id") int id){
+			
+			User user = us.getAllDetailsUsingIdInService(id);
+			
+			if(user != null) {
+				return new ResponseEntity(user, HttpStatus.OK);
+			}else {
+				
+				return new ResponseEntity("user not found", HttpStatus.INTERNAL_SERVER_ERROR);
+			}
+		}
 		
 		@PutMapping(value = "/updateUser")
 		public ResponseEntity<?> updateUser(@RequestBody User u){
@@ -76,8 +95,6 @@ public class UserController {
 			}else {
 				return new ResponseEntity("User is not present", HttpStatus.INTERNAL_SERVER_ERROR);
 			}
-			
-			//one comment added.
 	
 	}
 }
